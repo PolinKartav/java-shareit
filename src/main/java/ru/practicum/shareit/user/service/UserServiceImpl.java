@@ -64,8 +64,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long userId) {
-        if (!userStorage.getAllUsers().contains(userId)) {
-            new NotFoundException("Такого пользователя нет.");
+        if (userStorage.getUserById(userId).isEmpty()) {
+            throw new NotFoundException("Такого пользователя нет.");
         }
         userStorage.deleteUser(userId);
     }
