@@ -58,7 +58,7 @@ public class ItemStorageImpl implements ItemStorage {
     @Override
     public void removeItem(Long id) {
         Item item = getItemById(id).get();
-        itemsWithUsers.remove(item.getOwner());
+        itemsWithUsers.remove(item.getOwner().getId());
         items.remove(id);
     }
 
