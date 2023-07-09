@@ -12,8 +12,9 @@ public class ItemStorageImpl implements ItemStorage {
     private Long id = 1L;
     private final Map<Long, Item> items = new HashMap<>();
     private final Map<Long, Map<Long, Item>> itemsWithUsers = new HashMap<>();
+
     @Override
-    public Optional<Item> createItem(Item item){
+    public Optional<Item> createItem(Item item) {
         item.setId(getNewId());
         final Long ownerId = item.getOwner().getId();
         final Long itemId = item.getId();
@@ -26,14 +27,15 @@ public class ItemStorageImpl implements ItemStorage {
 
     @Override
     public Optional<Item> getItemById(long id) {
-        if (items.containsKey(id)){
+        if (items.containsKey(id)) {
             return Optional.of(items.get(id).toBuilder().build());
         }
         return Optional.empty();
     }
+
     @Override
     public List<Item> getAllItems(long userId) {
-        if (itemsWithUsers.containsKey(userId)){
+        if (itemsWithUsers.containsKey(userId)) {
             return List.copyOf(itemsWithUsers.get(userId).values());
         } else return Collections.emptyList();
     }
@@ -52,6 +54,7 @@ public class ItemStorageImpl implements ItemStorage {
 
         return getItemById(itemId).orElseThrow();
     }
+
     @Override
     public void removeItem(Long id) {
         Item item = getItemById(id).get();
