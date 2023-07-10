@@ -46,13 +46,11 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> getAllItems(Long userId) {
         userStorage.getUserById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь не найден."));
-        List<ItemDto> itemsDto = new ArrayList<>();
-        List<Item> items = itemStorage.getAllItems(userId);
-        for (Item item : items) {
-            ItemDto itemDto = ItemMapper.toItemDtoFromItem(item);
-            itemsDto.add(itemDto);
-        }
-        return itemsDto;
+
+        return itemStorage.getAllItems(userId)
+                .stream()
+                .map(ItemMapper::toItemDtoFromItem)
+                .collect(Collectors.toList());
     }
 
     @Override
