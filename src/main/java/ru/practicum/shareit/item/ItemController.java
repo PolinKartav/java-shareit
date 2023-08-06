@@ -3,12 +3,15 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CreateUpdateCommentDto;
 import ru.practicum.shareit.item.dto.CreateUpdateItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.marker.OnCreate;
 import ru.practicum.shareit.marker.OnUpdate;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -46,13 +49,21 @@ public class ItemController {
     }
 
     @DeleteMapping("/{itemId}")
-    public void removeItem(@PathVariable @NotNull long itemId) {
-        itemService.removeItem(itemId);
+    public void removeItem(@RequestHeader(REQUEST_HEADER_USER_ID) long userId,
+                           @PathVariable @NotNull long itemId) {
+        itemService.removeItem(itemId, userId);
     }
 
     @GetMapping("/search")
     public List<ItemDto> search(@RequestHeader(REQUEST_HEADER_USER_ID) long userId,
                                 @RequestParam String text) {
         return itemService.search(userId, text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createComment(@RequestHeader(REQUEST_HEADER_USER_ID) long userId,
+                                    @PathVariable long itemId,
+                                    @RequestBody @Valid CreateUpdateCommentDto createUpdateCommentDto) {
+        return itemService.createComment(userId, itemId, createUpdateCommentDto);
     }
 }
