@@ -20,5 +20,6 @@ public interface ItemService {
     void removeItem(long id, long userId);
 
     List<ItemDto> search(long userId, String text);
+
     CommentDto createComment(long userId, long itemId, CreateUpdateCommentDto commentDto);
 }
