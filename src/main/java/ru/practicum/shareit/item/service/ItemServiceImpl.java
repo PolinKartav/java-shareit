@@ -4,7 +4,6 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Status;
-import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -77,7 +76,7 @@ public class ItemServiceImpl implements ItemService {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя нет."));
 
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такого товара нет."));
-        if(userId != item.getOwner().getId()) {
+        if (userId != item.getOwner().getId()) {
             throw new NotFoundException("Такого товара нет.");
         }
 
@@ -101,7 +100,7 @@ public class ItemServiceImpl implements ItemService {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Такого пользователя нет."));
 
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Такого товара нет."));
-        if(userId != item.getOwner().getId()) {
+        if (userId != item.getOwner().getId()) {
             throw new NotFoundException("Такого товара нет.");
         }
 
@@ -122,6 +121,7 @@ public class ItemServiceImpl implements ItemService {
                 .map(ItemMapper::toItemDtoFromItem)
                 .collect(Collectors.toList());
     }
+
     @Override
     public CommentDto createComment(long userId, long itemId, CreateUpdateCommentDto createUpdateCommentDto) {
         User user = userRepository.findById(userId).orElseThrow(()
