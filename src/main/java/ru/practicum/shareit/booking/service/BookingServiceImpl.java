@@ -19,7 +19,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -118,7 +118,7 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfter(bookerId, LocalDateTime.now());
                 break;
             default:
-                bookings = new ArrayList<>();
+                bookings = Collections.emptyList();
         }
 
         return bookings

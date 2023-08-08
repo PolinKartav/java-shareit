@@ -7,7 +7,6 @@ import ru.practicum.shareit.user.model.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
 @Entity
 @Table(name = "bookings", schema = "public")
 @EqualsAndHashCode(exclude = {"start", "end", "item", "booker", "status"})
@@ -36,4 +35,44 @@ public class Booking {
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getStart() {
+        return start;
+    }
+
+    public LocalDateTime getEnd() {
+        return end;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+    public User getBooker() {
+        return booker;
+    }
+
+    public void setBooker(User booker) {
+        this.booker = booker;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 }

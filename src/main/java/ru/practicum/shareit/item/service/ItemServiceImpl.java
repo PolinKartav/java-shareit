@@ -92,7 +92,7 @@ public class ItemServiceImpl implements ItemService {
             item.setAvailable(createUpdateItemDto.getAvailable());
         }
 
-        return ItemMapper.toItemDtoFromItem(itemRepository.saveAndFlush(item));
+        return ItemMapper.toItemDtoFromItem(itemRepository.save(item));
     }
 
     @Override
