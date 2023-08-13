@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.Map;
 
 @Slf4j
@@ -32,6 +34,33 @@ public class ErrorHandler {
                 e.getMessage());
         return Map.of(
                 "error", e.getMessage()
+        );
+    }
+
+    @ExceptionHandler({ValidationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleServletRequestBinding(final RuntimeException e) {
+        log.debug("Получен статус {} {}. Причина: {}",
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                e.getMessage());
+        return Map.of(
+                "error", e.getMessage()
+        );
+    }
+
+    @ExceptionHandler({ConstraintViolationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleConstraintViolation(final ConstraintViolationException e) {
+        log.debug("Получен статус {} {}. Причина: {}",
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                e.getMessage());
+        return Map.of(
+                "error", e.getConstraintViolations()
+                        .stream()
+                        .map(ConstraintViolation::getMessageTemplate)
+                        .findFirst().orElse("No message")
         );
     }
 }
