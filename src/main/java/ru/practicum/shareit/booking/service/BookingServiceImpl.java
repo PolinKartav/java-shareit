@@ -10,7 +10,7 @@ import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.exception.ShareItValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.mapper.BookingMapper;
@@ -45,11 +45,11 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime end = createUpdateBookingDto.getEnd();
 
         if (!end.isAfter(start)) {
-            throw new ValidationException("Неправильное время бронирования.");
+            throw new ShareItValidationException("Неправильное время бронирования.");
         }
 
         if (Boolean.FALSE.equals(item.getAvailable())) {
-            throw new ValidationException("Бронирование недоступно");
+            throw new ShareItValidationException("Бронирование недоступно");
         }
 
         Booking booking = BookingMapper.toBookingFromCreateUpdateBookingDto(createUpdateBookingDto);
@@ -70,7 +70,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         if (booking.getStatus().equals(Status.APPROVED)) {
-            throw new ValidationException("Бронирование недоступно.");
+            throw new ShareItValidationException("Бронирование недоступно.");
         }
 
         booking.setStatus(approved ? Status.APPROVED : Status.REJECTED);

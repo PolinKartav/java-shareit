@@ -8,8 +8,8 @@ import ru.practicum.shareit.booking.dto.CreateUpdateBookingDto;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.validator.ValuesAllowedConstraint;
-import javax.validation.Valid;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static ru.practicum.shareit.util.Constant.REQUEST_HEADER_USER_ID;
@@ -51,7 +51,7 @@ public class BookingController {
                                                               "rejected"},
                                                       message = "Unknown state: UNSUPPORTED_STATUS")
                                               @RequestParam(defaultValue = "all") String state) {
-        return bookingService.getBookingsOfBooker(State.getState(state.toUpperCase()), userId);
+        return bookingService.getBookingsOfBooker(State.valueOf(state.toUpperCase()), userId);
     }
 
     @GetMapping("/owner")
@@ -65,7 +65,7 @@ public class BookingController {
                                                                "rejected"},
                                                        message = "Unknown state: UNSUPPORTED_STATUS")
                                                @RequestParam(defaultValue = "all") String state) {
-        return bookingService.getBookingsOfOwner(State.getState(state.toUpperCase()), userId);
+        return bookingService.getBookingsOfOwner(State.valueOf(state.toUpperCase()), userId);
     }
 
 }

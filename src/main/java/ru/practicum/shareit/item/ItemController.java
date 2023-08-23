@@ -13,6 +13,8 @@ import ru.practicum.shareit.marker.OnUpdate;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 import static ru.practicum.shareit.util.Constant.REQUEST_HEADER_USER_ID;
@@ -36,9 +38,12 @@ public class ItemController {
         return itemService.getItemById(userId, itemId);
     }
 
-    @GetMapping()
-    public List<ItemDto> getAllItems(@RequestHeader(REQUEST_HEADER_USER_ID) long userId) {
-        return itemService.getAllItems(userId);
+    @GetMapping
+    public List<ItemDto> getAllItems(@RequestHeader(REQUEST_HEADER_USER_ID) long userId,
+                                         @Valid @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                         @Valid @RequestParam(defaultValue = "10") @Positive int size) {
+
+        return itemService.getAllItems(userId, from, size);
     }
 
     @PatchMapping("/{itemId}")
@@ -56,14 +61,19 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> search(@RequestHeader(REQUEST_HEADER_USER_ID) long userId,
-                                @RequestParam String text) {
-        return itemService.search(userId, text);
+                                     @RequestParam(name = "text") String text,
+                                     @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                     @RequestParam(defaultValue = "10") @Positive int size) {
+        if ((text == null) || (text.isBlank())) {
+            return List.of();
+        }
+        return itemService.search(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(@RequestHeader(REQUEST_HEADER_USER_ID) long userId,
                                     @PathVariable long itemId,
-                                    @RequestBody @Valid CreateUpdateCommentDto createUpdateCommentDto) {
+                                    @RequestBody @Validated CreateUpdateCommentDto createUpdateCommentDto) {
         return itemService.createComment(userId, itemId, createUpdateCommentDto);
     }
 }
