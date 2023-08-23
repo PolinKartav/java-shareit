@@ -44,7 +44,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = "select b from Booking b join fetch b.item as i join fetch i.owner as o " +
             " where o.id = :ownerId and b.start < :dateTime and b.end > :dateTime")
     List<Booking> findAllByOwnerIdAndStartBeforeAndEndAfter(@Param("ownerId") Long ownerId,
-                                                            @Param("dateTime") LocalDateTime dateTime
-            , Pageable pageable);
+                                                            @Param("dateTime") LocalDateTime dateTime,
+                                                            Pageable pageable);
 
 }
