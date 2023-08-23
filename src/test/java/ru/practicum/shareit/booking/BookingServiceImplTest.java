@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.CreateUpdateBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
@@ -32,10 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class BookingServiceImplTest {
     private static BookingService bookingService;
@@ -453,205 +450,236 @@ class BookingServiceImplTest {
     void shouldGetUserBookingsWithAll() {
         when(userStorage.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(user));
-        when(bookingStorage.findAllByBookerId(anyLong(), any(Sort.class)))
+        when(bookingStorage.findAllByBookerId(anyLong(), any(Pageable.class)))
                 .thenReturn(listOfBookings);
 
-        List<BookingDto> bookings = bookingService.getBookingsOfBooker(State.ALL, 1L);
+        List<BookingDto> bookings = bookingService.getBookingsOfBooker(State.ALL, 1L, 7, 3);
 
         assertThat(bookings)
                 .isNotEmpty()
                 .hasSize(20)
                 .satisfies(list -> assertThat(list.get(0)).hasFieldOrPropertyWithValue("id", 2L));
         verify(userStorage, times(1)).findById(anyLong());
-        verify(bookingStorage, times(1)).findAllByBookerId(anyLong(), any(Sort.class));
+        verify(bookingStorage, times(1)).findAllByBookerId(anyLong(), any(Pageable.class));
     }
 
     @Test
     void shouldGetExceptionWithGetUserBookingsWithAll() {
         when(userStorage.findById(anyLong()))
                 .thenReturn(Optional.empty());
-        when(bookingStorage.findAllByBookerId(anyLong(), any(Sort.class)))
+        when(bookingStorage.findAllByBookerId(anyLong(), any(Pageable.class)))
                 .thenReturn(listOfBookings);
 
         final NotFoundException exception = Assertions.assertThrows(
                 NotFoundException.class,
-                () -> bookingService.getBookingsOfBooker(State.ALL, 1L)
+                () -> bookingService.getBookingsOfBooker(State.ALL, 1L, 7, 3)
         );
 
         assertEquals("User with id 1 not found",
                 exception.getMessage());
         verify(userStorage, times(1)).findById(anyLong());
-        verify(bookingStorage, never()).findAllByBookerId(anyLong(), any(Sort.class));
+        verify(bookingStorage, never()).findAllByBookerId(anyLong(), any(Pageable.class));
     }
 
     @Test
     void shouldGetUserBookingsWithCurrent() {
         when(userStorage.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(user));
-        when(bookingStorage.findAllByBookerIdAndStartBeforeAndEndAfter(anyLong(), any(LocalDateTime.class)))
+        when(bookingStorage.findAllByBookerIdAndStartBeforeAndEndAfter(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
                 .thenReturn(listOfBookings);
 
-        List<BookingDto> bookings = bookingService.getBookingsOfBooker(State.CURRENT, 1L);
+        List<BookingDto> bookings = bookingService.getBookingsOfBooker(State.CURRENT, 1L, 7, 3);
 
         assertThat(bookings)
                 .isNotEmpty()
                 .hasSize(20)
                 .satisfies(list -> assertThat(list.get(0)).hasFieldOrPropertyWithValue("id", 2L));
         verify(userStorage, times(1)).findById(anyLong());
-        verify(bookingStorage, times(1)).findAllByBookerIdAndStartBeforeAndEndAfter(anyLong(), any(LocalDateTime.class));
+        verify(bookingStorage, times(1))
+                .findAllByBookerIdAndStartBeforeAndEndAfter(
+                        anyLong(),
+                        any(LocalDateTime.class),
+                        any(Pageable.class));
     }
 
     @Test
     void shouldGetUserBookingsWithPast() {
         when(userStorage.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(user));
-        when(bookingStorage.findAllByBookerIdAndEndBefore(anyLong(), any(LocalDateTime.class), any(Sort.class)))
+        when(bookingStorage.findAllByBookerIdAndEndBefore(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
                 .thenReturn(listOfBookings);
 
-        List<BookingDto> bookings = bookingService.getBookingsOfBooker(State.PAST, 1L);
+        List<BookingDto> bookings = bookingService.getBookingsOfBooker(State.PAST, 1L, 7, 3);
 
         assertThat(bookings)
                 .isNotEmpty()
                 .hasSize(20)
                 .satisfies(list -> assertThat(list.get(0)).hasFieldOrPropertyWithValue("id", 2L));
         verify(userStorage, times(1)).findById(anyLong());
-        verify(bookingStorage, times(1)).findAllByBookerIdAndEndBefore(anyLong(), any(LocalDateTime.class), any(Sort.class));
+        verify(bookingStorage, times(1))
+                .findAllByBookerIdAndEndBefore(
+                        anyLong(),
+                        any(LocalDateTime.class),
+                        any(Pageable.class));
     }
 
     @Test
     void shouldGetUserBookingsWithFuture() {
         when(userStorage.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(user));
-        when(bookingStorage.findAllByBookerIdAndStartAfter(anyLong(), any(LocalDateTime.class), any(Sort.class)))
+        when(bookingStorage.findAllByBookerIdAndStartAfter(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
                 .thenReturn(listOfBookings);
 
-        List<BookingDto> bookings = bookingService.getBookingsOfBooker(State.FUTURE, 1L);
+        List<BookingDto> bookings = bookingService.getBookingsOfBooker(State.FUTURE, 1L, 7, 3);
 
         assertThat(bookings)
                 .isNotEmpty()
                 .hasSize(20)
                 .satisfies(list -> assertThat(list.get(0)).hasFieldOrPropertyWithValue("id", 2L));
         verify(userStorage, times(1)).findById(anyLong());
-        verify(bookingStorage, times(1)).findAllByBookerIdAndStartAfter(anyLong(), any(LocalDateTime.class), any(Sort.class));
+        verify(bookingStorage, times(1))
+                .findAllByBookerIdAndStartAfter(
+                        anyLong(),
+                        any(LocalDateTime.class),
+                        any(Pageable.class));
     }
 
     @Test
     void shouldGetUserBookingsWithWaiting() {
         when(userStorage.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(user));
-        when(bookingStorage.findAllByBookerIdAndStatus(anyLong(), any(Status.class), any(Sort.class)))
+        when(bookingStorage.findAllByBookerIdAndStatus(anyLong(), any(Status.class), any(Pageable.class)))
                 .thenReturn(listOfBookings);
 
-        List<BookingDto> bookings = bookingService.getBookingsOfBooker(State.WAITING,1L);
+        List<BookingDto> bookings = bookingService.getBookingsOfBooker(State.WAITING, 1L, 7, 3);
 
         assertThat(bookings)
                 .isNotEmpty()
                 .hasSize(20)
                 .satisfies(list -> assertThat(list.get(0)).hasFieldOrPropertyWithValue("id", 2L));
         verify(userStorage, times(1)).findById(anyLong());
-        verify(bookingStorage, times(1)).findAllByBookerIdAndStatus(anyLong(), any(Status.class), any(Sort.class));
+        verify(bookingStorage, times(1))
+                .findAllByBookerIdAndStatus(
+                        anyLong(),
+                        any(Status.class),
+                        any(Pageable.class));
     }
 
     @Test
     void shouldGetUserBookingsWithReject() {
         when(userStorage.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(user));
-        when(bookingStorage.findAllByBookerIdAndStatus(anyLong(), any(Status.class), any(Sort.class)))
+        when(bookingStorage.findAllByBookerIdAndStatus(anyLong(), any(Status.class), any(Pageable.class)))
                 .thenReturn(listOfBookings);
 
-        List<BookingDto> bookings = bookingService.getBookingsOfBooker(State.REJECTED, 1L);
+        List<BookingDto> bookings = bookingService.getBookingsOfBooker(State.REJECTED, 1L, 7, 3);
 
         assertThat(bookings)
                 .isNotEmpty()
                 .hasSize(20)
                 .satisfies(list -> assertThat(list.get(0)).hasFieldOrPropertyWithValue("id", 2L));
         verify(userStorage, times(1)).findById(anyLong());
-        verify(bookingStorage, times(1)).findAllByBookerIdAndStatus(anyLong(), any(Status.class), any(Sort.class));
+        verify(bookingStorage, times(1))
+                .findAllByBookerIdAndStatus(
+                        anyLong(),
+                        any(Status.class),
+                        any(Pageable.class));
     }
 
     @Test
     void shouldGetOwnerBookingsWithAll() {
         when(userStorage.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(user));
-        when(bookingStorage.findAllByOwnerId(anyLong(), any(Sort.class)))
+        when(bookingStorage.findAllByOwnerId(anyLong(), any(Pageable.class)))
                 .thenReturn(listOfBookings);
 
-        List<BookingDto> bookings = bookingService.getBookingsOfOwner(State.ALL, 1L);
+        List<BookingDto> bookings = bookingService.getBookingsOfOwner(State.ALL, 1L, 7, 3);
 
         assertThat(bookings)
                 .isNotEmpty()
                 .hasSize(20)
                 .satisfies(list -> assertThat(list.get(0)).hasFieldOrPropertyWithValue("id", 2L));
         verify(userStorage, times(1)).findById(anyLong());
-        verify(bookingStorage, times(1)).findAllByOwnerId(anyLong(), any(Sort.class));
+        verify(bookingStorage, times(1)).findAllByOwnerId(anyLong(), any(Pageable.class));
     }
 
     @Test
     void shouldGetExceptionWithGetOwnerBookingsWithAll() {
         when(userStorage.findById(anyLong()))
                 .thenReturn(Optional.empty());
-        when(bookingStorage.findAllByOwnerId(anyLong(), any(Sort.class)))
+        when(bookingStorage.findAllByOwnerId(anyLong(), any(Pageable.class)))
                 .thenReturn(listOfBookings);
 
         final NotFoundException exception = Assertions.assertThrows(
                 NotFoundException.class,
-                () -> bookingService.getBookingsOfOwner(State.ALL, 1L)
+                () -> bookingService.getBookingsOfOwner(State.ALL, 1L, 7, 3)
         );
 
         assertEquals("User with id 1 not found",
                 exception.getMessage());
         verify(userStorage, times(1)).findById(anyLong());
-        verify(bookingStorage, never()).findAllByOwnerId(anyLong(), any(Sort.class));
+        verify(bookingStorage, never()).findAllByOwnerId(anyLong(), any(Pageable.class));
     }
 
     @Test
     void shouldGetOwnerBookingsWithCurrent() {
         when(userStorage.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(user));
-        when(bookingStorage.findAllByOwnerIdAndStartBeforeAndEndAfter(anyLong(), any(LocalDateTime.class)))
+        when(bookingStorage.findAllByOwnerIdAndStartBeforeAndEndAfter(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
                 .thenReturn(listOfBookings);
 
-        List<BookingDto> bookings = bookingService.getBookingsOfOwner(State.CURRENT, 1L);
+        List<BookingDto> bookings = bookingService.getBookingsOfOwner(State.CURRENT, 1L, 7, 3);
 
         assertThat(bookings)
                 .isNotEmpty()
                 .hasSize(20)
                 .satisfies(list -> assertThat(list.get(0)).hasFieldOrPropertyWithValue("id", 2L));
         verify(userStorage, times(1)).findById(anyLong());
-        verify(bookingStorage, times(1)).findAllByOwnerIdAndStartBeforeAndEndAfter(anyLong(), any(LocalDateTime.class));
+        verify(bookingStorage, times(1))
+                .findAllByOwnerIdAndStartBeforeAndEndAfter(
+                        anyLong(),
+                        any(LocalDateTime.class),
+                        any(Pageable.class));
     }
 
     @Test
     void shouldGetOwnerBookingsWithFuture() {
         when(userStorage.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(user));
-        when(bookingStorage.findAllByOwnerIdAndStartAfter(anyLong(), any(LocalDateTime.class)))
+        when(bookingStorage.findAllByOwnerIdAndStartAfter(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
                 .thenReturn(listOfBookings);
 
-        List<BookingDto> bookings = bookingService.getBookingsOfOwner(State.FUTURE, 1L);
+        List<BookingDto> bookings = bookingService.getBookingsOfOwner(State.FUTURE, 1L, 7, 3);
 
         assertThat(bookings)
                 .isNotEmpty()
                 .hasSize(20)
                 .satisfies(list -> assertThat(list.get(0)).hasFieldOrPropertyWithValue("id", 2L));
         verify(userStorage, times(1)).findById(anyLong());
-        verify(bookingStorage, times(1)).findAllByOwnerIdAndStartAfter(anyLong(), any(LocalDateTime.class));
+        verify(bookingStorage, times(1))
+                .findAllByOwnerIdAndStartAfter(
+                        anyLong(),
+                        any(LocalDateTime.class),
+                        any(Pageable.class));
     }
 
     @Test
     void shouldGetOwnerBookingsWithWaiting() {
         when(userStorage.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(user));
-        when(bookingStorage.findAllByOwnerIdAndStatus(anyLong(), any(Status.class)))
+        when(bookingStorage.findAllByOwnerIdAndStatus(anyLong(), any(Status.class), any(Pageable.class)))
                 .thenReturn(listOfBookings);
 
-        List<BookingDto> bookings = bookingService.getBookingsOfOwner(State.WAITING, 1L);
+        List<BookingDto> bookings = bookingService.getBookingsOfOwner(State.WAITING, 1L, 7, 3);
 
         assertThat(bookings)
                 .isNotEmpty()
                 .hasSize(20)
                 .satisfies(list -> assertThat(list.get(0)).hasFieldOrPropertyWithValue("id", 2L));
         verify(userStorage, times(1)).findById(anyLong());
-        verify(bookingStorage, times(1)).findAllByOwnerIdAndStatus(anyLong(), any(Status.class));
+        verify(bookingStorage, times(1))
+                .findAllByOwnerIdAndStatus(anyLong(),
+                        any(Status.class),
+                        any(Pageable.class));
     }
 }

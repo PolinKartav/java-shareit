@@ -189,12 +189,12 @@ class BookingControllerTest {
         mockMvc.perform(get("/bookings")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
-        verify(bookingService, never()).getBookingsOfBooker(any(), anyLong());
+        verify(bookingService, never()).getBookingsOfBooker(any(), anyLong(), anyInt(), anyInt());
     }
 
     @Test
     void shouldGetBookingWithGetUserBookings() throws Exception {
-        when(bookingService.getBookingsOfBooker(any(), anyLong()))
+        when(bookingService.getBookingsOfBooker(any(), anyLong(), anyInt(), anyInt()))
                 .thenReturn(listWith20Bookings);
 
         mockMvc.perform(get("/bookings")
@@ -207,7 +207,7 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$.size()").value(20))
                 .andExpect(jsonPath("$.[0].id").value(2L))
                 .andExpect(jsonPath("$.[19].id").value(21L));
-        verify(bookingService, times(1)).getBookingsOfBooker(any(), anyLong());
+        verify(bookingService, times(1)).getBookingsOfBooker(any(), anyLong(), anyInt(), anyInt());
     }
 
     @Test
@@ -215,12 +215,12 @@ class BookingControllerTest {
         mockMvc.perform(get("/bookings/owner")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
-        verify(bookingService, never()).getBookingsOfOwner(any(), anyLong());
+        verify(bookingService, never()).getBookingsOfOwner(any(), anyLong(), anyInt(), anyInt());
     }
 
     @Test
     void shouldGetBookingWithGetOwnerBookings() throws Exception {
-        when(bookingService.getBookingsOfOwner(any(), anyLong()))
+        when(bookingService.getBookingsOfOwner(any(), anyLong(), anyInt(), anyInt()))
                 .thenReturn(listWith20Bookings);
 
         mockMvc.perform(get("/bookings/owner")
@@ -233,6 +233,6 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$.size()").value(20))
                 .andExpect(jsonPath("$.[0].id").value(2L))
                 .andExpect(jsonPath("$.[19].id").value(21L));
-        verify(bookingService, times(1)).getBookingsOfOwner(any(), anyLong());
+        verify(bookingService, times(1)).getBookingsOfOwner(any(), anyLong(), anyInt(), anyInt());
     }
 }

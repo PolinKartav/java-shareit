@@ -127,7 +127,7 @@ public class BookingIntegrationTest {
         bookingService.createBooking(1L, bookingDto.toBuilder().itemId(2L).start(LocalDateTime.now().minusDays(2).plusHours(2)).build());
         bookingService.confirmedBooking(1L, 1L, true);
 
-        List<BookingDto> bookings = bookingService.getBookingsOfBooker(State.ALL, 1L);
+        List<BookingDto> bookings = bookingService.getBookingsOfBooker(State.ALL, 1L, 0, 2);
 
         Assertions.assertThat(bookings)
                 .isNotEmpty()
@@ -153,7 +153,7 @@ public class BookingIntegrationTest {
         bookingService.confirmedBooking(1L, 1L, true);
         bookingService.confirmedBooking(2L, 5L, true);
 
-        List<BookingDto> bookings = bookingService.getBookingsOfOwner(State.ALL, 1L);
+        List<BookingDto> bookings = bookingService.getBookingsOfOwner(State.ALL, 1L, 0, 4);
 
         Assertions.assertThat(bookings)
                 .isNotEmpty()
