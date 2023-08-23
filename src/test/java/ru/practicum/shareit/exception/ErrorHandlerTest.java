@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.validation.ValidationException;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,6 +40,13 @@ class ErrorHandlerTest {
     void testHandleArgumentException() {
         ArgumentException argumentException = new ArgumentException("Некорректный параметр");
         Map<String, String> result = errorHandler.handleServletRequestBinding(argumentException);
+        assertEquals("Некорректный параметр", result.get("error"));
+    }
+
+    @Test
+    void testHandleRuntimeException() {
+        ValidationException exception = new ValidationException("Некорректный параметр");
+        Map<String, String> result = errorHandler.handleRuntime(exception);
         assertEquals("Некорректный параметр", result.get("error"));
     }
 }
