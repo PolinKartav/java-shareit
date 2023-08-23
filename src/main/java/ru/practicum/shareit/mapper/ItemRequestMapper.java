@@ -31,11 +31,11 @@ public class ItemRequestMapper {
         ItemRequestDto itemRequestDto = toItemRequestDtoFromItemRequest(itemRequest);
         itemRequestDto.setItems(items != null ?
                 items
-                .stream()
-                .map(ItemMapper::toItemDtoFromItem)
-                .collect(Collectors.toList()):
-                    new ArrayList<>()
-    );
+                        .stream()
+                        .map(ItemMapper::toItemDtoFromItem)
+                        .collect(Collectors.toList()) :
+                new ArrayList<>()
+        );
         return itemRequestDto;
     }
 }
