@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.model.Booking;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.CreateUpdateBookingDto;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -17,10 +18,8 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.mapper.BookingMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,9 +99,6 @@ public class BookingServiceImpl implements BookingService {
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
         List<Booking> bookings;
         switch (state) {
-            case ALL:
-                bookings = bookingRepository.findAllByBookerId(bookerId, PageRequest.of(from / size, size, sort));
-                break;
             case WAITING:
                 bookings = bookingRepository.findAllByBookerIdAndStatus(bookerId, Status.WAITING, PageRequest.of(from / size, size, sort));
                 break;
@@ -119,7 +115,7 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfter(bookerId, LocalDateTime.now(), PageRequest.of(from / size, size, sort));
                 break;
             default:
-                bookings = Collections.emptyList();
+                bookings = bookingRepository.findAllByBookerId(bookerId, PageRequest.of(from / size, size, sort));
         }
 
         return bookings
