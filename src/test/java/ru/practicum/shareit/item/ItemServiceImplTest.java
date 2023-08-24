@@ -33,11 +33,11 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class ItemServiceImplTest {
-    private static ItemService itemService;
-    private static ItemRepository itemStorage;
-    private static UserRepository userStorage;
-    private static CommentRepository commentStorage;
-    private static ItemRequestRepository requestStorage;
+    private ItemService itemService;
+    private ItemRepository itemStorage;
+    private UserRepository userStorage;
+    private CommentRepository commentStorage;
+    private ItemRequestRepository requestStorage;
 
     private static User user;
     private static ItemRequest request;

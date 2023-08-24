@@ -36,8 +36,6 @@ public class Item {
 
     @ManyToOne
     @ToString.Exclude
-    //@NotNull
-   // @Column(name = "request_id")
     private ItemRequest request;
 
     @OneToMany

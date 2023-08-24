@@ -29,10 +29,10 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 class ItemRequestServiceImplTest {
-    private static ItemRequestService requestService;
-    private static UserRepository userStorage;
-    private static ItemRepository itemStorage;
-    private static ItemRequestRepository requestStorage;
+    private ItemRequestService requestService;
+    private UserRepository userStorage;
+    private ItemRepository itemStorage;
+    private ItemRequestRepository requestStorage;
 
     private static User user;
     private static ItemRequest request;

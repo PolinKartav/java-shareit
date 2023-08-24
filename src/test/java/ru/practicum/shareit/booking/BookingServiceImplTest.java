@@ -35,10 +35,10 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 class BookingServiceImplTest {
-    private static BookingService bookingService;
-    private static BookingRepository bookingStorage;
-    private static ItemRepository itemStorage;
-    private static UserRepository userStorage;
+    private BookingService bookingService;
+    private BookingRepository bookingStorage;
+    private ItemRepository itemStorage;
+    private UserRepository userStorage;
 
     private static User user;
     private static User user2;
