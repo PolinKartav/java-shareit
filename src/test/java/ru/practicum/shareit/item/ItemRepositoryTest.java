@@ -31,8 +31,6 @@ class ItemRepositoryTest {
     @Autowired
     private ItemRequestRepository itemRequestRepository;
 
-    Sort SORT_BY_START_BY_DESC = Sort.by(Sort.Direction.DESC, "start");
-    Pageable pageable = PageRequest.of(0, 10, SORT_BY_START_BY_DESC);
     private Item item1;
     private Item item2;
     private Item item3;
@@ -81,7 +79,6 @@ class ItemRepositoryTest {
         userRepository.saveAll(List.of(user1, user2, user3, user4, user5));
         itemRepository.saveAll(List.of(item1, item2, item3, item4, item5));
         itemRequestRepository.saveAll(List.of(itemRequest1, itemRequest2, itemRequest3, itemRequest4));
-
     }
 
     @Test

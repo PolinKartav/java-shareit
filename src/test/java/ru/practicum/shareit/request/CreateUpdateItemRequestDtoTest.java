@@ -11,6 +11,7 @@ import ru.practicum.shareit.request.dto.CreateUpdateItemRequestDto;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 @JsonTest
 class CreateUpdateItemRequestDtoTest {
     @Autowired
@@ -27,6 +28,7 @@ class CreateUpdateItemRequestDtoTest {
         assertThat(result).hasJsonPathStringValue("$.description");
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo("requestText");
     }
+
     @Test
     void shouldDeserialize() throws IOException {
         String content = "{\"description\":\"requestText\"}";

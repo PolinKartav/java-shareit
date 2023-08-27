@@ -27,6 +27,7 @@ class CreateUpdateBookingDtoTest {
         startTime = LocalDateTime.now().minusDays(2);
         endTime = LocalDateTime.now().minusDays(1);
     }
+
     @Test
     void shouldSerialize() throws IOException {
         CreateUpdateBookingDto dto = CreateUpdateBookingDto.builder()

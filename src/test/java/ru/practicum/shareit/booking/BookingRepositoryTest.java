@@ -42,8 +42,8 @@ public class BookingRepositoryTest {
     private Booking booking4;
     LocalDateTime start = LocalDateTime.now();
     LocalDateTime end = LocalDateTime.now().plusHours(1);
-    Sort SORT_BY_START_BY_DESC = Sort.by(Sort.Direction.DESC, "start");
-    Pageable pageable = PageRequest.of(0, 10, SORT_BY_START_BY_DESC);
+    private Sort SORT_BY_START_BY_DESC = Sort.by(Sort.Direction.DESC, "start");
+    private Pageable pageable = PageRequest.of(0, 10, SORT_BY_START_BY_DESC);
 
     @BeforeEach
     void beforeEach() {
