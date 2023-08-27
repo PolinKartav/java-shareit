@@ -11,6 +11,7 @@ import ru.practicum.shareit.user.dto.CreateUpdateUserDto;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 @JsonTest
 class CreateUpdateUserDtoTest {
     @Autowired
@@ -30,6 +31,7 @@ class CreateUpdateUserDtoTest {
         assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo("userName");
         assertThat(result).extractingJsonPathStringValue("$.email").isEqualTo("mail@ya.ru");
     }
+
     @Test
     void shouldDeserialize() throws IOException {
         String content = "{\"name\":\"userName\",\"email\":\"mail@ya.ru\"}";
