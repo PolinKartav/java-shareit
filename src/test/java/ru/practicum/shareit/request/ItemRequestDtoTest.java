@@ -44,6 +44,7 @@ class ItemRequestDtoTest {
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo("requestText");
         assertThat(result).extractingJsonPathValue("$.items").isEqualTo(null);
     }
+
     @Test
     void shouldDeserialize() throws IOException {
         String content = "{\"id\":\"1\",\"description\":\"requestText\",\"created\":\"" + time + "\"}";
