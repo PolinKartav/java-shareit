@@ -1,25 +1,25 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.model.Booking;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.CreateUpdateBookingDto;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.exception.ShareItValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.mapper.BookingMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,11 +45,11 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime end = createUpdateBookingDto.getEnd();
 
         if (!end.isAfter(start)) {
-            throw new ValidationException("Неправильное время бронирования.");
+            throw new ShareItValidationException("Неправильное время бронирования.");
         }
 
         if (Boolean.FALSE.equals(item.getAvailable())) {
-            throw new ValidationException("Бронирование недоступно");
+            throw new ShareItValidationException("Бронирование недоступно");
         }
 
         Booking booking = BookingMapper.toBookingFromCreateUpdateBookingDto(createUpdateBookingDto);
@@ -70,7 +70,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         if (booking.getStatus().equals(Status.APPROVED)) {
-            throw new ValidationException("Бронирование недоступно.");
+            throw new ShareItValidationException("Бронирование недоступно.");
         }
 
         booking.setStatus(approved ? Status.APPROVED : Status.REJECTED);
@@ -94,31 +94,28 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingDto> getBookingsOfBooker(State state, Long bookerId) {
+    public List<BookingDto> getBookingsOfBooker(State state, Long bookerId, int from, int size) {
         getUserById(bookerId);
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
         List<Booking> bookings;
         switch (state) {
-            case ALL:
-                bookings = bookingRepository.findAllByBookerId(bookerId, sort);
-                break;
             case WAITING:
-                bookings = bookingRepository.findAllByBookerIdAndStatus(bookerId, Status.WAITING, sort);
+                bookings = bookingRepository.findAllByBookerIdAndStatus(bookerId, Status.WAITING, PageRequest.of(from / size, size, sort));
                 break;
             case REJECTED:
-                bookings = bookingRepository.findAllByBookerIdAndStatus(bookerId, Status.REJECTED, sort);
+                bookings = bookingRepository.findAllByBookerIdAndStatus(bookerId, Status.REJECTED, PageRequest.of(from / size, size, sort));
                 break;
             case PAST:
-                bookings = bookingRepository.findAllByBookerIdAndEndBefore(bookerId, LocalDateTime.now(), sort);
+                bookings = bookingRepository.findAllByBookerIdAndEndBefore(bookerId, LocalDateTime.now(), PageRequest.of(from / size, size, sort));
                 break;
             case FUTURE:
-                bookings = bookingRepository.findAllByBookerIdAndStartAfter(bookerId, LocalDateTime.now(), sort);
+                bookings = bookingRepository.findAllByBookerIdAndStartAfter(bookerId, LocalDateTime.now(), PageRequest.of(from / size, size, sort));
                 break;
             case CURRENT:
-                bookings = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfter(bookerId, LocalDateTime.now());
+                bookings = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfter(bookerId, LocalDateTime.now(), PageRequest.of(from / size, size, sort));
                 break;
             default:
-                bookings = Collections.emptyList();
+                bookings = bookingRepository.findAllByBookerId(bookerId, PageRequest.of(from / size, size, sort));
         }
 
         return bookings
@@ -129,28 +126,28 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingDto> getBookingsOfOwner(State state, Long ownerId) {
+    public List<BookingDto> getBookingsOfOwner(State state, Long ownerId, int from, int size) {
         getUserById(ownerId);
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
         List<Booking> bookings;
         switch (state) {
             case WAITING:
-                bookings = bookingRepository.findAllByOwnerIdAndStatus(ownerId, Status.WAITING);
+                bookings = bookingRepository.findAllByOwnerIdAndStatus(ownerId, Status.WAITING, PageRequest.of(from / size, size, sort));
                 break;
             case REJECTED:
-                bookings = bookingRepository.findAllByOwnerIdAndStatus(ownerId, Status.REJECTED);
+                bookings = bookingRepository.findAllByOwnerIdAndStatus(ownerId, Status.REJECTED, PageRequest.of(from / size, size, sort));
                 break;
             case PAST:
-                bookings = bookingRepository.findAllByOwnerIdAndEndBefore(ownerId, LocalDateTime.now());
+                bookings = bookingRepository.findAllByOwnerIdAndEndBefore(ownerId, LocalDateTime.now(), PageRequest.of(from / size, size, sort));
                 break;
             case FUTURE:
-                bookings = bookingRepository.findAllByOwnerIdAndStartAfter(ownerId, LocalDateTime.now());
+                bookings = bookingRepository.findAllByOwnerIdAndStartAfter(ownerId, LocalDateTime.now(), PageRequest.of(from / size, size, sort));
                 break;
             case CURRENT:
-                bookings = bookingRepository.findAllByOwnerIdAndStartBeforeAndEndAfter(ownerId, LocalDateTime.now());
+                bookings = bookingRepository.findAllByOwnerIdAndStartBeforeAndEndAfter(ownerId, LocalDateTime.now(), PageRequest.of(from / size, size, sort));
                 break;
             default:
-                bookings = bookingRepository.findAllByOwnerId(ownerId, sort);
+                bookings = bookingRepository.findAllByOwnerId(ownerId, PageRequest.of(from / size, size, sort));
         }
         return bookings
                 .stream()

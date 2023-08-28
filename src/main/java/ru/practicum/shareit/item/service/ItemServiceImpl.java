@@ -2,10 +2,12 @@ package ru.practicum.shareit.item.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.exception.ShareItValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CreateUpdateCommentDto;
 import ru.practicum.shareit.item.dto.CreateUpdateItemDto;
@@ -16,6 +18,8 @@ import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.mapper.CommentMapper;
 import ru.practicum.shareit.mapper.ItemMapper;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -34,6 +38,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
     public ItemDto createItem(long userId, CreateUpdateItemDto createUpdateItemDto) {
@@ -42,6 +47,12 @@ public class ItemServiceImpl implements ItemService {
 
         Item item = ItemMapper.toItemFromCreateUpdateItemDto(createUpdateItemDto);
         item.setOwner(user);
+        if (createUpdateItemDto.getRequestId() != null) {
+            ItemRequest request = itemRequestRepository.findById(createUpdateItemDto.getRequestId()).orElseThrow(
+                    () -> new NotFoundException("Запрос не найден")
+            );
+            item.setRequest(request);
+        }
 
         return ItemMapper.toItemDtoFromItem(itemRepository.save(item));
     }
@@ -61,14 +72,15 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getAllItems(Long userId) {
+    public List<ItemDto> getAllItems(Long userId, int from, int size) {
         userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь не найден."));
 
-        return itemRepository.findAllByOwnerId(userId)
+        return itemRepository.findAllByOwnerId(userId, PageRequest.of(from / size, size))
                 .stream()
                 .map(ItemMapper::toItemDtoWithBookingsFromItem)
                 .collect(Collectors.toList());
+
     }
 
     @Override
@@ -108,15 +120,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> search(long userId, String text) {
-        userRepository.findById(userId).orElseThrow(() ->
-                new NotFoundException("Пользователь не найден."));
+    public List<ItemDto> search(String text, int from, int size) {
 
         if (text.isBlank()) {
             return Collections.emptyList();
         }
+        Pageable pageable = PageRequest.of(from / size, size);
 
-        return itemRepository.search(text)
+        return itemRepository.search(text, pageable)
                 .stream()
                 .map(ItemMapper::toItemDtoFromItem)
                 .collect(Collectors.toList());
@@ -139,7 +150,7 @@ public class ItemServiceImpl implements ItemService {
 
             return CommentMapper.toCommentDtoFromComment(commentRepository.save(comment));
         } else {
-            throw new ValidationException(String.format(
+            throw new ShareItValidationException(String.format(
                     "Пользователь с ID = %s не брал в аренду вещь с ID = %s", userId, itemId));
         }
     }

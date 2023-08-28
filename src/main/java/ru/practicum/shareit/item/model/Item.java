@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.model;
 
 import lombok.*;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -32,6 +33,10 @@ public class Item {
     @ManyToOne
     @ToString.Exclude
     private User owner;
+
+    @ManyToOne
+    @ToString.Exclude
+    private ItemRequest request;
 
     @OneToMany
     @JoinColumn(name = "item_id")
