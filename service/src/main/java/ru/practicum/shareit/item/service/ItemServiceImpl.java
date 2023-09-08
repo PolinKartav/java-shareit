@@ -4,6 +4,7 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -75,7 +76,8 @@ public class ItemServiceImpl implements ItemService {
         userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь не найден."));
 
-        return itemRepository.findAllByOwnerId(userId, PageRequest.of(from / size, size))
+        return itemRepository.findAllByOwnerId(userId, PageRequest.of(from / size,
+                        size, Sort.by(Sort.Direction.ASC, "id")))
                 .stream()
                 .map(ItemMapper::toItemDtoWithBookingsFromItem)
                 .collect(Collectors.toList());
