@@ -7,6 +7,7 @@ import ru.practicum.shareit.item.dto.CreateUpdateCommentDto;
 import ru.practicum.shareit.item.dto.CreateUpdateItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
+
 import java.util.List;
 
 import static ru.practicum.shareit.util.Constant.REQUEST_HEADER_USER_ID;
@@ -31,8 +32,8 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getAllItems(@RequestHeader(REQUEST_HEADER_USER_ID) long userId,
-                                        @RequestParam(defaultValue = "0") int from,
-                                        @RequestParam(defaultValue = "10") int size) {
+                                     @RequestParam(defaultValue = "0") int from,
+                                     @RequestParam(defaultValue = "10") int size) {
 
         return itemService.getAllItems(userId, from, size);
     }
@@ -52,9 +53,9 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> search(@RequestHeader(REQUEST_HEADER_USER_ID) long userId,
-                                     @RequestParam(name = "text") String text,
-                                     @RequestParam(defaultValue = "0") int from,
-                                     @RequestParam(defaultValue = "10") int size) {
+                                @RequestParam(name = "text") String text,
+                                @RequestParam(defaultValue = "0") int from,
+                                @RequestParam(defaultValue = "10") int size) {
         if ((text == null) || (text.isBlank())) {
             return List.of();
         }

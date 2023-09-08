@@ -7,6 +7,7 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
 import java.util.List;
+
 import static ru.practicum.shareit.util.Constant.REQUEST_HEADER_USER_ID;
 
 @RestController
@@ -17,7 +18,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ItemRequestDto add(@RequestHeader(REQUEST_HEADER_USER_ID) Long userId,
-                                 @RequestBody CreateUpdateItemRequestDto itemRequestDto) {
+                              @RequestBody CreateUpdateItemRequestDto itemRequestDto) {
         return itemRequestService.add(itemRequestDto, userId);
     }
 

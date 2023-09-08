@@ -7,6 +7,7 @@ import ru.practicum.shareit.booking.dto.CreateUpdateBookingDto;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.validator.ValuesAllowedConstraint;
+
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -29,6 +30,7 @@ public class BookingController {
     public BookingDto getById(@RequestHeader(REQUEST_HEADER_USER_ID) Long userId, @PathVariable Long bookingId) {
         return bookingService.getById(userId, bookingId);
     }
+
     @PatchMapping("/{bookingId}")
     public BookingDto confirmedBooking(@RequestHeader(REQUEST_HEADER_USER_ID) Long userId,
                                        @PathVariable Long bookingId,
