@@ -11,11 +11,9 @@ import java.time.LocalDateTime;
 @Data
 @Builder(toBuilder = true)
 public class CreateUpdateBookingDto {
-    @NotNull
     @FutureOrPresent
     private LocalDateTime start;
 
-    @NotNull
     @Future
     private LocalDateTime end;
 

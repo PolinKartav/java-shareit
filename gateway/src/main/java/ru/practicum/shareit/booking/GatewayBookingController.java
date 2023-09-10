@@ -68,7 +68,7 @@ public class GatewayBookingController {
                                                      @RequestParam(defaultValue = "all") String state,
                                                      @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                                      @RequestParam(defaultValue = "20") @Positive int size) {
-        return client.getOwnerBookings(userId, String.valueOf(State.valueOf(state.toUpperCase())), from, size);
+        return client.getOwnerBookings(userId, (state.toUpperCase()), from, size);
     }
 
 }

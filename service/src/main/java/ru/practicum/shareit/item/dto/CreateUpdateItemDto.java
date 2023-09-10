@@ -12,11 +12,9 @@ import javax.validation.constraints.Size;
 @Data
 @Builder(toBuilder = true)
 public class CreateUpdateItemDto {
-    @NotBlank(groups = OnCreate.class)
     @Size(max = 255, groups = {OnCreate.class, OnUpdate.class})
     private String name;
 
-    @NotBlank(groups = OnCreate.class)
     @Size(max = 512, groups = {OnCreate.class, OnUpdate.class})
     private String description;
 
