@@ -8,8 +8,6 @@ import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.validator.ValuesAllowedConstraint;
 
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 import static ru.practicum.shareit.util.Constant.REQUEST_HEADER_USER_ID;
@@ -49,8 +47,8 @@ public class BookingController {
                                                               "rejected"},
                                                       message = "Unknown state: UNSUPPORTED_STATUS")
                                               @RequestParam(defaultValue = "all") String state,
-                                              @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                              @RequestParam(defaultValue = "20") @Positive int size) {
+                                              @RequestParam(defaultValue = "0") int from,
+                                              @RequestParam(defaultValue = "20") int size) {
         return bookingService.getBookingsOfBooker(State.valueOf(state.toUpperCase()), userId, from, size);
     }
 
@@ -65,8 +63,8 @@ public class BookingController {
                                                                "rejected"},
                                                        message = "Unknown state: UNSUPPORTED_STATUS")
                                                @RequestParam(defaultValue = "all") String state,
-                                               @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                               @RequestParam(defaultValue = "20") @Positive int size) {
+                                               @RequestParam(defaultValue = "0") int from,
+                                               @RequestParam(defaultValue = "20") int size) {
         return bookingService.getBookingsOfOwner(State.valueOf(state.toUpperCase()), userId, from, size);
     }
 
